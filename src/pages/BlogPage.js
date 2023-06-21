@@ -1,11 +1,14 @@
+import { useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 // @mui
-import { Grid, Button, Container, Stack, Typography } from '@mui/material';
+import { Grid, Button, Container, Stack, Typography ,Dialog} from '@mui/material';
 // components
-import Iconify from '../components/iconify';
 import { BlogPostCard, BlogPostsSort, BlogPostsSearch } from '../sections/@dashboard/blog';
 // mock
 import POSTS from '../_mock/blog';
+import AddInstituteForm from '../Modals/AddInstituteForm';
+import Iconify from '../components/iconify';
+import EditInstituteForm from '../Modals/EditinstituteForm';
 
 // ----------------------------------------------------------------------
 
@@ -18,19 +21,30 @@ const SORT_OPTIONS = [
 // ----------------------------------------------------------------------
 
 export default function BlogPage() {
+
+  const [openAddInstitute, setOpenAddInstitute] = useState(false);
+
+  const handleOpenAddModal = () => {
+    setOpenAddInstitute(true);
+  }
+
+  const handleCloseAddModal = () => {
+    setOpenAddInstitute(false);
+  }
+
   return (
     <>
-      <Helmet>
+      {/* <Helmet>
         <title> Dashboard: Blog | Minimal UI </title>
-      </Helmet>
+      </Helmet> */}
 
       <Container>
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
           <Typography variant="h4" gutterBottom>
-            Blog
+            Institute
           </Typography>
-          <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />}>
-            New Post
+          <Button onClick={handleOpenAddModal} variant="contained" startIcon={<Iconify icon="eva:plus-fill" />}>
+            New Institute
           </Button>
         </Stack>
 
@@ -45,6 +59,17 @@ export default function BlogPage() {
           ))}
         </Grid>
       </Container>
+
+      <Dialog open={openAddInstitute} onClose={handleCloseAddModal} >
+        <AddInstituteForm
+        handleClose={handleCloseAddModal}
+        // auth={auth}
+        // onSuccess={() => {
+        //   handleAddStudentDialogClose();
+        //   getStudents();
+        // }}
+        />
+      </Dialog>
     </>
   );
 }

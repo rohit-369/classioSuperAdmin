@@ -1,13 +1,18 @@
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom/dist';
 import PropTypes from 'prop-types';
 // @mui
+import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { alpha, styled } from '@mui/material/styles';
-import { Box, Link, Card, Grid, Avatar, Typography, CardContent } from '@mui/material';
+import { Box, Link, Card, Grid, Avatar, Typography, CardContent, MenuItem, Menu, IconButton, Dialog } from '@mui/material';
 // utils
 import { fDate } from '../../../utils/formatTime';
 import { fShortenNumber } from '../../../utils/formatNumber';
 //
 import SvgColor from '../../../components/svg-color';
 import Iconify from '../../../components/iconify';
+import EditInstituteForm from '../../../Modals/EditinstituteForm';
+
 
 // ----------------------------------------------------------------------
 
@@ -56,7 +61,12 @@ BlogPostCard.propTypes = {
   index: PropTypes.number,
 };
 
+const options = ["Edit", "Active/Inactive", 'Admin', "Billing"];
+
+const ITEM_HEIGHT = 48;
+
 export default function BlogPostCard({ post, index }) {
+  const navigate = useNavigate();
   const { cover, title, view, comment, share, author, createdAt } = post;
   const latestPostLarge = index === 0;
   const latestPost = index === 1 || index === 2;
@@ -67,9 +77,94 @@ export default function BlogPostCard({ post, index }) {
     { number: share, icon: 'eva:share-fill' },
   ];
 
+  const [anchorEl, setAnchorEl] = useState(null);
+  const open = Boolean(anchorEl);
+  const [openEditInstitute, setOpenEditInstitute] = useState(false);
+
+  const handleOpenEditModal = () => {
+    setOpenEditInstitute(true);
+  }
+
+  const handleCloseEditModal = () => {
+    setOpenEditInstitute(false);
+  }
+
+  const handleClick = (event) => {
+    event.stopPropagation();
+    setAnchorEl(event.currentTarget);
+    // console.log(event)
+  };
+
+  const handleClose = (e) => {
+    setAnchorEl(null);
+    // console.log(e.target.outerText)
+
+    if (e.target.outerText === "Edit") {
+       setOpenEditInstitute(true);
+    }
+
+    if (e.target.outerText === "Active/Inactive") {
+      // setAddDialogOpen(true);
+    }
+
+    if (e.target.outerText === "Admin") {
+      // setAddDialogOpen(true);
+      navigate('/dashboard/user');
+    }
+
+    if (e.target.outerText === "Billing") {
+      // setAddDialogOpen(true);
+      navigate('/dashboard/billing');
+    }
+
+  };
+
   return (
     <Grid item xs={12} sm={latestPostLarge ? 12 : 6} md={latestPostLarge ? 6 : 3}>
+      <Dialog open={openEditInstitute} onClose={handleCloseEditModal} >
+        <EditInstituteForm
+        handleClose={handleCloseEditModal}
+        // auth={auth}
+        // onSuccess={() => {
+        //   handleAddStudentDialogClose();
+        //   getStudents();
+        // }}
+        />
+      </Dialog>
       <Card sx={{ position: 'relative' }}>
+        <div style={{ display: 'flex', justifyContent: 'end' }}>
+          <IconButton
+            aria-label="more"
+            id="long-button"
+            aria-controls={open ? 'long-menu' : undefined}
+            aria-expanded={open ? 'true' : undefined}
+            aria-haspopup="true"
+            onClick={handleClick}
+          >
+            <MoreVertIcon />
+          </IconButton>
+          <Menu
+            id="long-menu"
+            MenuListProps={{
+              'aria-labelledby': 'long-button',
+            }}
+            anchorEl={anchorEl}
+            open={open}
+            onClose={handleClose}
+            PaperProps={{
+              style: {
+                maxHeight: ITEM_HEIGHT * 4.5,
+                width: '20ch',
+              },
+            }}
+          >
+            {options.map((option) => (
+              <MenuItem key={option} selected={option === 'Pyxis'} onClick={handleClose}>
+                {option}
+              </MenuItem>
+            ))}
+          </Menu>
+        </div>
         <StyledCardMedia
           sx={{
             ...((latestPostLarge || latestPost) && {
@@ -117,7 +212,6 @@ export default function BlogPostCard({ post, index }) {
               }),
             }}
           />
-
           <StyledCover alt={title} src={cover} />
         </StyledCardMedia>
 
@@ -170,5 +264,6 @@ export default function BlogPostCard({ post, index }) {
         </CardContent>
       </Card>
     </Grid>
+
   );
 }

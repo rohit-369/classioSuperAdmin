@@ -4,7 +4,6 @@ import { sentenceCase } from 'change-case';
 import { useState } from 'react';
 // @mui
 import {
-  Box,
   Card,
   Table,
   Stack,
@@ -22,9 +21,9 @@ import {
   IconButton,
   TableContainer,
   TablePagination,
-  Dialog
 } from '@mui/material';
-import AddAdminForm from '../Modals/AddAdminForm';
+import DownloadForOfflineIcon from '@mui/icons-material/DownloadForOffline';
+import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 // components
 import Label from '../components/label';
 import Iconify from '../components/iconify';
@@ -33,13 +32,12 @@ import Scrollbar from '../components/scrollbar';
 import { UserListHead, UserListToolbar } from '../sections/@dashboard/user';
 // mock
 import USERLIST from '../_mock/user';
-import EditAdminForm from '../Modals/EditAdminFrom';
 
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
-  { id: 'name', label: 'Name', alignRight: false },
-  { id: 'company', label: 'Company', alignRight: false },
+  { id: 'invoice', label: 'Invoice', alignRight: false },
+  { id: 'transactionId', label: 'Transaction Id', alignRight: false },
   { id: 'role', label: 'Role', alignRight: false },
   { id: 'isVerified', label: 'Verified', alignRight: false },
   { id: 'status', label: 'Status', alignRight: false },
@@ -77,12 +75,8 @@ function applySortFilter(array, comparator, query) {
   return stabilizedThis.map((el) => el[0]);
 }
 
-export default function UserPage() {
+export default function Billing() {
   const [open, setOpen] = useState(null);
-
-  const [openAddDialogForm, setOpenAddDialogForm] = useState(false);
-
-  const [openEditDialogForm, setOpenEditDialogForm] = useState(false);
 
   const [page, setPage] = useState(0);
 
@@ -95,22 +89,6 @@ export default function UserPage() {
   const [filterName, setFilterName] = useState('');
 
   const [rowsPerPage, setRowsPerPage] = useState(5);
-
-  const handleOpenAddModal = () => {
-    setOpenAddDialogForm(true);
-  }
-
-  const handleCloseAddDialogForm = () => {
-    setOpenAddDialogForm(false);
-  }
-
-  const handleOpenEditModal = () => {
-    setOpenEditDialogForm(true);
-  }
-
-  const handleCloseEditDialogForm = () => {
-    setOpenEditDialogForm(false);
-  }
 
   const handleOpenMenu = (event) => {
     setOpen(event.currentTarget);
@@ -179,11 +157,11 @@ export default function UserPage() {
       <Container>
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
           <Typography variant="h4" gutterBottom>
-            Admin
+            Billing
           </Typography>
-          <Button onClick={handleOpenAddModal} variant="contained" startIcon={<Iconify icon="eva:plus-fill" />}>
+          {/* <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />}>
             New Admin
-          </Button>
+          </Button> */}
         </Stack>
 
         <Card>
@@ -213,10 +191,13 @@ export default function UserPage() {
                         </TableCell>
 
                         <TableCell component="th" scope="row" padding="none">
-                          <Stack direction="row" alignItems="center" spacing={2}>
-                            <Avatar alt={name} src={avatarUrl} />
-                            <Typography variant="subtitle2" noWrap>
-                              {name}
+                          <Stack direction="row" alignItems="center" spacing={3}>
+                            {/* <Avatar alt={name} src={avatarUrl} /> */}
+                            <Typography variant="subtitle2" noWrap display={'flex'} justifyContent={'center'} alignItems={'center'} position={'relative'} left={'12px'}>
+                              <PictureAsPdfIcon />
+                              <Typography>
+                                {/* {name} */}
+                              </Typography>
                             </Typography>
                           </Stack>
                         </TableCell>
@@ -303,52 +284,19 @@ export default function UserPage() {
           },
         }}
       >
-        <MenuItem onClick={handleOpenEditModal}>
+        <MenuItem>
           <Iconify icon={'eva:edit-fill'} sx={{ mr: 2 }} />
           Edit
         </MenuItem>
-
         <MenuItem sx={{ color: 'error.main' }}>
           <Iconify icon={'eva:trash-2-outline'} sx={{ mr: 2 }} />
           Delete
         </MenuItem>
         <MenuItem>
-          {/* <Iconify icon={'eva:edit-fill'} sx={{ mr: 2 }} /> */}
-          <Box
-          // onClick={() => handleStatusMenu(statusId)}
-          >Active</Box>
-          &nbsp;&nbsp;/&nbsp;&nbsp;
-          <Box
-            sx={{ color: "error.main" }}
-          // onClick={() => handleStatusMenu(statusId)}
-          >
-            Banned
-          </Box>
-          {/* <MenuItem sx={{ color: 'error.main' }} value="inactive" onClick={() => handleStatusMenu("inactive")}>
-        InActive
-      </MenuItem> */}
+          <DownloadForOfflineIcon icon={'eva:edit-fill'} sx={{ mr: 2 }} />
+          Download
         </MenuItem>
       </Popover>
-      <Dialog open={openAddDialogForm} onClose={handleCloseAddDialogForm} >
-        <AddAdminForm
-        // handleClose={handleAddStudentDialogClose}
-        // auth={auth}
-        // onSuccess={() => {
-        //   handleAddStudentDialogClose();
-        //   getStudents();
-        // }}
-        />
-      </Dialog>
-      <Dialog open={openEditDialogForm} onClose={handleCloseEditDialogForm} >
-        <EditAdminForm
-        // handleClose={handleAddStudentDialogClose}
-        // auth={auth}
-        // onSuccess={() => {
-        //   handleAddStudentDialogClose();
-        //   getStudents();
-        // }}
-        />
-      </Dialog>
     </>
   );
 }
