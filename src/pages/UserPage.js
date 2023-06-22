@@ -1,7 +1,7 @@
+import { useEffect, useState, useContext } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { filter } from 'lodash';
 import { sentenceCase } from 'change-case';
-import { useState } from 'react';
 // @mui
 import {
   Box,
@@ -34,6 +34,8 @@ import { UserListHead, UserListToolbar } from '../sections/@dashboard/user';
 // mock
 import USERLIST from '../_mock/user';
 import EditAdminForm from '../Modals/EditAdminFrom';
+import AdminNetwork from './adminNetwork';
+import AppContext from "../context/appContext";
 
 // ----------------------------------------------------------------------
 
@@ -95,6 +97,10 @@ export default function UserPage() {
   const [filterName, setFilterName] = useState('');
 
   const [rowsPerPage, setRowsPerPage] = useState(5);
+  
+  const { auth, userPermission } = useContext(AppContext);
+
+  const [adminData, setAdminData] = useState([]);
 
   const handleOpenAddModal = () => {
     setOpenAddDialogForm(true);
@@ -169,6 +175,27 @@ export default function UserPage() {
   const filteredUsers = applySortFilter(USERLIST, getComparator(order, orderBy), filterName);
 
   const isNotFound = !filteredUsers.length && !!filterName;
+
+  const getAdminList = async () => {
+    try {
+      // setIsLoading(true);
+      const response = await AdminNetwork.getAllAdmin(
+        auth,
+      );
+      setAdminData(response.userList);
+      // setIsLoading(false);
+      // setRowCountState(response.count);
+    } catch (err) {
+      console.log(err);
+      // setIsLoading(false);
+    }
+  };
+
+  // console.log('adminData' , adminData)
+
+  useEffect(() => {
+    getAdminList();
+  }, [])
 
   return (
     <>

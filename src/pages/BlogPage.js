@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 // @mui
 import { Grid, Button, Container, Stack, Typography ,Dialog} from '@mui/material';
@@ -8,7 +8,7 @@ import { BlogPostCard, BlogPostsSort, BlogPostsSearch } from '../sections/@dashb
 import POSTS from '../_mock/blog';
 import AddInstituteForm from '../Modals/AddInstituteForm';
 import Iconify from '../components/iconify';
-import EditInstituteForm from '../Modals/EditinstituteForm';
+import AppContext from '../context/appContext';
 
 // ----------------------------------------------------------------------
 
@@ -23,6 +23,10 @@ const SORT_OPTIONS = [
 export default function BlogPage() {
 
   const [openAddInstitute, setOpenAddInstitute] = useState(false);
+
+  const {auth} = useContext(AppContext);
+
+  console.log('auth',auth)
 
   const handleOpenAddModal = () => {
     setOpenAddInstitute(true);

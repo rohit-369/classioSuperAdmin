@@ -16,7 +16,7 @@ import {
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import ChangeCircleIcon from "@mui/icons-material/ChangeCircle";
 
-const EditInstituteForm = ({handleClose}) => {
+const EditInstituteModal = ({handleClose}) => {
 
     const [instituteName, setInstituteFirstName] = useState('');
     const [address, setAddress] = useState('');
@@ -195,4 +195,4 @@ const EditInstituteForm = ({handleClose}) => {
     )
 }
 
-export default EditInstituteForm
+export default EditInstituteModal

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom/dist';
 import PropTypes from 'prop-types';
 // @mui
@@ -11,7 +11,9 @@ import { fShortenNumber } from '../../../utils/formatNumber';
 //
 import SvgColor from '../../../components/svg-color';
 import Iconify from '../../../components/iconify';
-import EditInstituteForm from '../../../Modals/EditinstituteForm';
+import EditInstituteForm from '../../../Modals/EditInstituteModal';
+import AdminNetwork from '../../../pages/adminNetwork';
+import AppContext from "../../../context/appContext";
 
 
 // ----------------------------------------------------------------------
@@ -66,7 +68,15 @@ const options = ["Edit", "Active/Inactive", 'Admin', "Billing"];
 const ITEM_HEIGHT = 48;
 
 export default function BlogPostCard({ post, index }) {
+  const { auth, userPermission } = useContext(AppContext);
+
+  const [instituteData, setInstituteData] = useState([]);
+  const [page, setPage] = useState(0);
+  const [pageSize, setPageSize] = useState(25);
   const navigate = useNavigate();
+  const [anchorEl, setAnchorEl] = useState(null);
+  const open = Boolean(anchorEl);
+  const [openEditInstitute, setOpenEditInstitute] = useState(false);
   const { cover, title, view, comment, share, author, createdAt } = post;
   const latestPostLarge = index === 0;
   const latestPost = index === 1 || index === 2;
@@ -77,9 +87,14 @@ export default function BlogPostCard({ post, index }) {
     { number: share, icon: 'eva:share-fill' },
   ];
 
-  const [anchorEl, setAnchorEl] = useState(null);
-  const open = Boolean(anchorEl);
-  const [openEditInstitute, setOpenEditInstitute] = useState(false);
+  const handlePageChange = (newPage) => {
+    setPage(newPage);
+  };
+
+  const handlePageSizeChange = (newPageSize) => {
+    setPageSize(newPageSize);
+  };
+
 
   const handleOpenEditModal = () => {
     setOpenEditInstitute(true);
@@ -100,7 +115,7 @@ export default function BlogPostCard({ post, index }) {
     // console.log(e.target.outerText)
 
     if (e.target.outerText === "Edit") {
-       setOpenEditInstitute(true);
+      setOpenEditInstitute(true);
     }
 
     if (e.target.outerText === "Active/Inactive") {
@@ -119,11 +134,34 @@ export default function BlogPostCard({ post, index }) {
 
   };
 
+  const getInstituteItem = async () => {
+    try {
+      // setIsLoading(true);
+      const response = await AdminNetwork.getInstituteList(
+        auth,
+        page,
+        pageSize
+      );
+      setInstituteData(response);
+      // setIsLoading(false);
+      // setRowCountState(response.count);
+    } catch (err) {
+      console.log(err);
+      // setIsLoading(false);
+    }
+  };
+
+  // console.log('instituteData', instituteData)
+
+  useEffect(() => {
+    getInstituteItem();
+  }, [page, pageSize])
+
   return (
-    <Grid item xs={12} sm={latestPostLarge ? 12 : 6} md={latestPostLarge ? 6 : 3}>
+    <Grid item xs={12} sm={6} md={3}>
       <Dialog open={openEditInstitute} onClose={handleCloseEditModal} >
         <EditInstituteForm
-        handleClose={handleCloseEditModal}
+          handleClose={handleCloseEditModal}
         // auth={auth}
         // onSuccess={() => {
         //   handleAddStudentDialogClose();
@@ -167,23 +205,23 @@ export default function BlogPostCard({ post, index }) {
         </div>
         <StyledCardMedia
           sx={{
-            ...((latestPostLarge || latestPost) && {
-              pt: 'calc(100% * 4 / 3)',
-              '&:after': {
-                top: 0,
-                content: "''",
-                width: '100%',
-                height: '100%',
-                position: 'absolute',
-                bgcolor: (theme) => alpha(theme.palette.grey[900], 0.72),
-              },
-            }),
-            ...(latestPostLarge && {
-              pt: {
-                xs: 'calc(100% * 4 / 3)',
-                sm: 'calc(100% * 3 / 4.66)',
-              },
-            }),
+            // ...((latestPost) && {
+            //   pt: 'calc(100% * 4 / 3)',
+            //   '&:after': {
+            //     top: 0,
+            //     content: "''",
+            //     width: '100%',
+            //     height: '100%',
+            //     position: 'absolute',
+            //     bgcolor: (theme) => alpha(theme.palette.grey[900], 0.72),
+            //   },
+            // }),
+            // ...(latestPostLarge && {
+            //   pt: {
+            //     xs: 'calc(100% * 4 / 3)',
+            //     sm: 'calc(100% * 3 / 4.66)',
+            //   },
+            // }),
           }}
         >
           <SvgColor
@@ -196,20 +234,20 @@ export default function BlogPostCard({ post, index }) {
               bottom: -15,
               position: 'absolute',
               color: 'background.paper',
-              ...((latestPostLarge || latestPost) && { display: 'none' }),
+              // ...((latestPostLarge || latestPost) && { display: 'none' }),
             }}
           />
           <StyledAvatar
             alt={author.name}
             src={author.avatarUrl}
             sx={{
-              ...((latestPostLarge || latestPost) && {
-                zIndex: 9,
-                top: 24,
-                left: 24,
-                width: 40,
-                height: 40,
-              }),
+              // ...((latestPostLarge || latestPost) && {
+              //   zIndex: 9,
+              //   top: 24,
+              //   left: 24,
+              //   width: 40,
+              //   height: 40,
+              // }),
             }}
           />
           <StyledCover alt={title} src={cover} />
@@ -218,11 +256,11 @@ export default function BlogPostCard({ post, index }) {
         <CardContent
           sx={{
             pt: 4,
-            ...((latestPostLarge || latestPost) && {
-              bottom: 0,
-              width: '100%',
-              position: 'absolute',
-            }),
+            // ...((latestPostLarge || latestPost) && {
+            //   bottom: 0,
+            //   width: '100%',
+            //   position: 'absolute',
+            // }),
           }}
         >
           <Typography gutterBottom variant="caption" sx={{ color: 'text.disabled', display: 'block' }}>
@@ -234,10 +272,10 @@ export default function BlogPostCard({ post, index }) {
             variant="subtitle2"
             underline="hover"
             sx={{
-              ...(latestPostLarge && { typography: 'h5', height: 60 }),
-              ...((latestPostLarge || latestPost) && {
-                color: 'common.white',
-              }),
+              // ...(latestPostLarge && { typography: 'h5', height: 60 }),
+              // ...((latestPostLarge || latestPost) && {
+              //   color: 'common.white',
+              // }),
             }}
           >
             {title}
@@ -251,9 +289,9 @@ export default function BlogPostCard({ post, index }) {
                   display: 'flex',
                   alignItems: 'center',
                   ml: index === 0 ? 0 : 1.5,
-                  ...((latestPostLarge || latestPost) && {
-                    color: 'grey.500',
-                  }),
+                  // ...((latestPostLarge || latestPost) && {
+                  //   color: 'grey.500',
+                  // }),
                 }}
               >
                 <Iconify icon={info.icon} sx={{ width: 16, height: 16, mr: 0.5 }} />
