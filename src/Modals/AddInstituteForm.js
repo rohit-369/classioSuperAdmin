@@ -88,7 +88,7 @@ const AddInstituteForm = ({handleClose}) => {
                         InputProps={{ maxLength: 12 }}
                         value={contact}
                         // onChange={handleContactChange}
-                        sx={{ gridColumn: "span 12", margin: "1rem", width: "200px" }}
+                        sx={{ gridColumn: "span 12", margin: "1rem", width: "200px" ,border:'none'}}
                     />
                 </Stack>
                 <Stack sx={{ width: "100%" }} spacing={"1rem"} justifyContent={"start"} alignItems={'start'} marginLeft={'15px'}>

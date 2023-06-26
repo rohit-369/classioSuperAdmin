@@ -10,11 +10,20 @@ import Page404 from './pages/Page404';
 import ProductsPage from './pages/ProductsPage';
 import DashboardAppPage from './pages/DashboardAppPage';
 import Billing from './pages/Billing';
+import InsightsPage from './pages/InsightsPage';
 
 // ----------------------------------------------------------------------
 
 export default function Router() {
   const routes = useRoutes([
+    {
+      path: '/institute',
+      element: <DashboardLayout />,
+      children: [
+        { element: <Navigate to="/dashboard/app" />, index: true },
+        { path: 'insights/:id', element: <InsightsPage /> },
+      ],
+    },
     {
       path: '/dashboard',
       element: <DashboardLayout />,

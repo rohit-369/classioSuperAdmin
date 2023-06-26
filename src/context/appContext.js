@@ -13,7 +13,7 @@ export const AppProvider = ({ children }) => {
     const res = await AppNetwork.fetchCity();
     // console.log(res);
     setStateList(res.states);
-  };
+  };  
   console.log('token', token)
   const getUserPermission = async (auth, userId) => {
     const res = await AppNetwork.fetchUsersPermission(userId, auth);
